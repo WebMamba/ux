@@ -12,7 +12,7 @@ class ComponentLexer extends Lexer
     const COMPONENTS_REGEX = [
         'open_tags' => '/<\s*([A-Z][\w\-\:\.]+)\s*' . self::ATTRIBUTES_REGEX . '(\s?)+>/',
         'close_tags' => '/<\/\s*([A-Z][\w\-\:\.]+)\s*>/',
-        'self_close_tags' => '/<\s*([A-Z][\w\-\:\.]+)\s*' . self::ATTRIBUTES_REGEX . '*(\s?)+\/>/',
+        'self_close_tags' => '/<\s*([A-Z][\w\-\:\.]+)\s*' . self::ATTRIBUTES_REGEX . '(\s?)+\/>/',
     ];
 
     public function tokenize(Source $source): TokenStream
