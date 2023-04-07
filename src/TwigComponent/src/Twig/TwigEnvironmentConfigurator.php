@@ -9,7 +9,8 @@ class TwigEnvironmentConfigurator
 {
     public function __construct(
         private readonly EnvironmentConfigurator $decorated
-    ) {}
+    ) {
+    }
 
     public function configure(Environment $environment): void
     {

@@ -8,12 +8,14 @@ use Twig\TokenStream;
 
 class ComponentLexer extends Lexer
 {
-    const ATTRIBUTES_REGEX = '(?<attributes>(?:\s+[\w\-:.@]+(=(?:\\\"[^\\\"]*\\\"|\'[^\']*\'|[^\'\\\"=<>]+))?)*\s*)';
-    const COMPONENTS_REGEX = [
-        'open_tags' => '/<\s*([A-Z][\w\-\:\.]+)\s*' . self::ATTRIBUTES_REGEX . '(\s?)+>/',
-        'close_tags' => '/<\/\s*([A-Z][\w\-\:\.]+)\s*>/',
-        'self_close_tags' => '/<\s*([A-Z][\w\-\:\.]+)\s*' . self::ATTRIBUTES_REGEX . '(\s?)+\/>/',
-    ];
+    public const ATTRIBUTES_REGEX = '(?<attributes>(?:\s+[\w\-:.@]+(=(?:\\\"[^\\\"]*\\\"|\'[^\']*\'|[^\'\\\"=<>]+))?)*\s*)';
+    public const OPEN_TAGS_REGEX = '/<\s*x-(?<name>([[\w\-\:\.]+))\s*'.self::ATTRIBUTES_REGEX.'(\s?)+>/';
+    public const CLOSE_TAGS_REGEX = '/<\/\s*x-([\w\-\:\.]+)\s*>/';
+    public const SELF_CLOSE_TAGS_REGEX = '/<\s*x-(?<name>([\w\-\:\.]+))\s*'.self::ATTRIBUTES_REGEX.'(\s?)+\/>/';
+    public const BLOCK_TAGS_OPEN = '/<\s*x-block\s+name=("|\')(?<name>([\w\-\:\.]+))("|\')\s*>/';
+    public const BLOCK_TAGS_CLOSE = '/<\s*\/\s*x-block\s*>/';
+    public const ATTRIBUTE_BAG_REGEX = '/(?:^|\s+)\{\{\s*(attributes(?:.+?(?<!\s))?)\s*\}\}/x';
+    public const ATTRIBUTE_KEY_VALUE_REGEX = '/(?<attribute>[\w\-:.@]+)(=(?<value>(\"[^\"]+\"|\\\'[^\\\']+\\\'|[^\s>]+)))?/x';
 
     public function tokenize(Source $source): TokenStream
     {
@@ -30,6 +32,8 @@ class ComponentLexer extends Lexer
 
     private function preparsed(string $value)
     {
+        $value = $this->lexBlockTags($value);
+        $value = $this->lexBlockTagsClose($value);
         $value = $this->lexSelfCloseTag($value);
         $value = $this->lexOpeningTags($value);
         $value = $this->lexClosingTag($value);
@@ -40,33 +44,54 @@ class ComponentLexer extends Lexer
     private function lexOpeningTags(string $value)
     {
         return preg_replace_callback(
-            self::COMPONENTS_REGEX['open_tags'],
+            self::OPEN_TAGS_REGEX,
             function (array $matches) {
-                $name = lcfirst($matches[1]);
+                $name = $matches['name'];
                 $attributes = $this->getAttributesFromAttributeString($matches['attributes']);
 
-                return "{% component " . $name . " with " . $attributes . "%}";
+                return '{% component '.$name.' with '.$attributes.'%}';
             },
             $value
-
         );
     }
 
     private function lexClosingTag(string $value)
     {
-        return preg_replace(self::COMPONENTS_REGEX['close_tags'], '{% endcomponent %}', $value);
+        return preg_replace(self::CLOSE_TAGS_REGEX, '{% endcomponent %}', $value);
     }
 
     private function lexSelfCloseTag(string $value)
     {
         return preg_replace_callback(
-            self::COMPONENTS_REGEX['self_close_tags'],
+            self::SELF_CLOSE_TAGS_REGEX,
             function (array $matches) {
-                $name = lcfirst($matches[1]);
+                $name = $matches['name'];
                 $attributes = $this->getAttributesFromAttributeString($matches['attributes']);
 
-                return "{{ component('" . $name . "', " . $attributes . ") }}";
+                return "{{ component('".$name."', ".$attributes.') }}';
             },
+            $value
+        );
+    }
+
+    private function lexBlockTags(string $value)
+    {
+        return preg_replace_callback(
+            self::BLOCK_TAGS_OPEN,
+            function (array $matches) {
+                $name = $matches['name'];
+
+                return '{% block '.$name.' %}';
+            },
+            $value
+        );
+    }
+
+    private function lexBlockTagsClose(string $value)
+    {
+        return preg_replace(
+            self::BLOCK_TAGS_CLOSE,
+            '{% endblock %}',
             $value
         );
     }
@@ -75,46 +100,27 @@ class ComponentLexer extends Lexer
     {
         $attributeString = $this->parseAttributeBag($attributeString);
 
-        $pattern = '/
-            (?<attribute>[\w\-:.@]+)
-            (
-                =
-                (?<value>
-                    (
-                        \"[^\"]+\"
-                        |
-                        \\\'[^\\\']+\\\'
-                        |
-                        [^\s>]+
-                    )
-                )
-            )?
-        /x';
-
-        if (! preg_match_all($pattern, $attributeString, $matches, PREG_SET_ORDER)) {
+        if (!preg_match_all(self::ATTRIBUTE_KEY_VALUE_REGEX, $attributeString, $matches, \PREG_SET_ORDER)) {
             return '{}';
         }
 
-
         $attributes = [];
-
         foreach ($matches as $match) {
             $attribute = $match['attribute'];
             $value = $match['value'] ?? null;
 
-            if (is_null($value)) {
+            if (null === $value) {
                 $value = 'true';
             }
 
-
-            if (strpos($attribute, ":") === 0) {
-                $attribute = str_replace(":", "", $attribute);
+            if (str_starts_with($attribute, ':')) {
+                $attribute = str_replace(':', '', $attribute);
                 $value = $this->stripQuotes($value);
             }
 
             $valueWithoutQuotes = $this->stripQuotes($value);
 
-            if ((strpos($valueWithoutQuotes, '{{') === 0) && (strpos($valueWithoutQuotes, '}}') === strlen($valueWithoutQuotes) - 2)) {
+            if (str_starts_with($valueWithoutQuotes, '{{') && (strpos($valueWithoutQuotes, '}}') === \strlen($valueWithoutQuotes) - 2)) {
                 $value = substr($valueWithoutQuotes, 2, -2);
             } else {
                 $value = $value;
@@ -123,29 +129,24 @@ class ComponentLexer extends Lexer
             $attributes[$attribute] = $value;
         }
 
-        $out = "{";
+        $out = '{';
         foreach ($attributes as $key => $value) {
             $key = "'$key'";
             $out .= "$key: $value,";
-        };
+        }
 
-        return rtrim($out, ',') . "}";
+        return rtrim($out, ',').'}';
     }
 
     public function stripQuotes(string $value)
     {
-        return strpos($value, '"') === 0 || strpos($value, '\'') === 0
+        return str_starts_with($value, '"') || str_starts_with($value, '\'')
             ? substr($value, 1, -1)
             : $value;
     }
 
     protected function parseAttributeBag(string $attributeString)
     {
-        $pattern = "/
-            (?:^|\s+)                                        # start of the string or whitespace between attributes
-            \{\{\s*(attributes(?:.+?(?<!\s))?)\s*\}\} # exact match of attributes variable being echoed
-        /x";
-
-        return preg_replace($pattern, ' :attributes="$1"', $attributeString);
+        return preg_replace(self::ATTRIBUTE_BAG_REGEX, ' :attributes="$1"', $attributeString);
     }
 }
