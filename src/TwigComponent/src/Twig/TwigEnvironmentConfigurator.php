@@ -7,9 +7,12 @@ use Twig\Environment;
 
 class TwigEnvironmentConfigurator
 {
+    private EnvironmentConfigurator $decorated;
+
     public function __construct(
-        private readonly EnvironmentConfigurator $decorated
+        EnvironmentConfigurator $decorated
     ) {
+        $this->decorated = $decorated;
     }
 
     public function configure(Environment $environment): void
