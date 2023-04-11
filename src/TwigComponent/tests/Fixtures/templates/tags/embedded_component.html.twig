@@ -1,8 +1,8 @@
-<x-table caption='data table' :headers='["key", "value"]' :data='[[1, 2], [3, 4]]'>
-        <x-block name="th">custom th ({{ parent() }})</x-block>
-        <x-block name="td">custom td ({{ parent() }})</x-block>
+<t:table caption='data table' :headers='["key", "value"]' :data='[[1, 2], [3, 4]]'>
+        <t:block name="th">custom th ({{ parent() }})</t:block>
+        <t:block name="td">custom td ({{ parent() }})</t:block>
 
-        <x-block name="footer">
+        <t:block name="footer">
                 My footer
-        </x-block>
-</x-table>
+        </t:block>
+</t:table>
