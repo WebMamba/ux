@@ -29,7 +29,7 @@ final class TwigPreLexerTest extends TestCase
     {
         yield 'simple_component' => [
             '<t:foo />',
-            "{% component foo %}{% endcomponent %}",
+            '{% component foo %}{% endcomponent %}',
         ];
 
         yield 'component_with_attributes' => [
@@ -39,27 +39,27 @@ final class TwigPreLexerTest extends TestCase
 
         yield 'component_with_dynamic_attributes' => [
             '<t:foo dynamic="{{ dynamicVar }}" :otherDynamic="anotherVar" />',
-            "{% component foo with { dynamic: dynamicVar, otherDynamic: anotherVar } %}{% endcomponent %}",
+            '{% component foo with { dynamic: dynamicVar, otherDynamic: anotherVar } %}{% endcomponent %}',
         ];
 
         yield 'component_with_closing_tag' => [
             '<t:foo></t:foo>',
-            "{% component foo %}{% endcomponent %}",
+            '{% component foo %}{% endcomponent %}',
         ];
 
         yield 'component_with_block' => [
             '<t:foo><t:block name="foo_block">Foo</t:block></t:foo>',
-            "{% component foo %}{% block foo_block %}Foo{% endblock %}{% endcomponent %}",
+            '{% component foo %}{% block foo_block %}Foo{% endblock %}{% endcomponent %}',
         ];
 
         yield 'component_with_embedded_component_inside_block' => [
             '<t:foo><t:block name="foo_block"><t:bar /></t:block></t:foo>',
-            "{% component foo %}{% block foo_block %}{% component bar %}{% endcomponent %}{% endblock %}{% endcomponent %}",
+            '{% component foo %}{% block foo_block %}{% component bar %}{% endcomponent %}{% endblock %}{% endcomponent %}',
         ];
 
         yield 'attribute_with_no_value' => [
             '<t:foo bar />',
-            "{% component foo with { bar: true } %}{% endcomponent %}",
+            '{% component foo with { bar: true } %}{% endcomponent %}',
         ];
     }
 }

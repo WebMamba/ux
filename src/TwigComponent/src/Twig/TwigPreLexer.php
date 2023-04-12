@@ -31,14 +31,14 @@ class TwigPreLexer
     public function preLexComponents(string $input): string
     {
         $this->input = $input;
-        $this->length = strlen($input);
+        $this->length = \strlen($input);
         $output = '';
 
         while ($this->position < $this->length) {
             if ($this->consume('<t:')) {
                 $componentName = $this->consumeComponentName();
 
-                if ($componentName === 'block') {
+                if ('block' === $componentName) {
                     $output .= $this->consumeBlock();
 
                     continue;
@@ -51,7 +51,7 @@ class TwigPreLexer
                     $this->currentComponents[] = $componentName;
                 }
 
-                $output .= "{% component {$componentName}" . ($attributes ? " with { {$attributes} }" : '') . " %}";
+                $output .= "{% component {$componentName}".($attributes ? " with { {$attributes} }" : '').' %}';
                 if ($isSelfClosing) {
                     $output .= '{% endcomponent %}';
                 }
@@ -70,14 +70,14 @@ class TwigPreLexer
                     throw new \RuntimeException("Expected closing tag '</t:{$lastComponent}>' but found '</t:{$closingComponentName}>' at line {$this->line}");
                 }
 
-                $output .= "{% endcomponent %}";
+                $output .= '{% endcomponent %}';
 
                 continue;
             }
 
             $char = $this->consumeChar();
-            if ($char === "\n") {
-                $this->line++;
+            if ("\n" === $char) {
+                ++$this->line;
             }
             $output .= $char;
         }
@@ -89,7 +89,7 @@ class TwigPreLexer
     {
         $start = $this->position;
         while ($this->position < $this->length && preg_match('/[A-Za-z0-9_]/', $this->input[$this->position])) {
-            $this->position++;
+            ++$this->position;
         }
         $componentName = substr($this->input, $start, $this->position - $start);
 
@@ -122,7 +122,7 @@ class TwigPreLexer
 
             // <t:component someProp> -> someProp: true
             if (!$this->check('=')) {
-                $attributes[] = sprintf("%s: true", $key);
+                $attributes[] = sprintf('%s: true', $key);
                 $this->consumeWhitespace();
                 continue;
             }
@@ -144,7 +144,7 @@ class TwigPreLexer
             $this->expectAndConsumeChar($quote);
 
             if ($isAttributeDynamic) {
-                $attributes[] = sprintf("%s: %s", $key, $attributeValue);
+                $attributes[] = sprintf('%s: %s', $key, $attributeValue);
             } else {
                 $attributes[] = sprintf("%s: '%s'", $key, str_replace("'", "\'", $attributeValue));
             }
@@ -157,8 +157,9 @@ class TwigPreLexer
 
     private function consume(string $string): bool
     {
-        if (substr($this->input, $this->position, strlen($string)) === $string) {
-            $this->position += strlen($string);
+        if (substr($this->input, $this->position, \strlen($string)) === $string) {
+            $this->position += \strlen($string);
+
             return true;
         }
 
@@ -168,16 +169,16 @@ class TwigPreLexer
     private function consumeChar($validChars = null): string
     {
         if ($this->position >= $this->length) {
-            throw new \RuntimeException("Unexpected end of input");
+            throw new \RuntimeException('Unexpected end of input');
         }
 
         $char = $this->input[$this->position];
 
-        if ($validChars !== null && !in_array($char, (array)$validChars, true)) {
-            throw new \RuntimeException("Expected one of [" . implode('', (array)$validChars) . "] but found '{$char}' at line {$this->line}");
+        if (null !== $validChars && !\in_array($char, (array) $validChars, true)) {
+            throw new \RuntimeException('Expected one of ['.implode('', (array) $validChars)."] but found '{$char}' at line {$this->line}");
         }
 
-        $this->position++;
+        ++$this->position;
 
         return $char;
     }
@@ -185,17 +186,17 @@ class TwigPreLexer
     private function consumeUntil(string $endString): string
     {
         $start = $this->position;
-        $endCharLength = strlen($endString);
+        $endCharLength = \strlen($endString);
 
         while ($this->position < $this->length) {
             if (substr($this->input, $this->position, $endCharLength) === $endString) {
                 break;
             }
 
-            if ($this->input[$this->position] === "\n") {
-                $this->line++;
+            if ("\n" === $this->input[$this->position]) {
+                ++$this->line;
             }
-            $this->position++;
+            ++$this->position;
         }
 
         return substr($this->input, $start, $this->position - $start);
@@ -204,10 +205,10 @@ class TwigPreLexer
     private function consumeWhitespace(): void
     {
         while ($this->position < $this->length && preg_match('/\s/', $this->input[$this->position])) {
-            if ($this->input[$this->position] === "\n") {
-                $this->line++;
+            if ("\n" === $this->input[$this->position]) {
+                ++$this->line;
             }
-            $this->position++;
+            ++$this->position;
         }
     }
 
@@ -216,24 +217,24 @@ class TwigPreLexer
      */
     private function expectAndConsumeChar(string $char): void
     {
-        if (strlen($char) !== 1) {
+        if (1 !== \strlen($char)) {
             throw new \InvalidArgumentException('Expected a single character');
         }
 
         if ($this->position >= $this->length || $this->input[$this->position] !== $char) {
             throw new \RuntimeException("Expected '{$char}' but found '{$this->input[$this->position]}' at line {$this->line}");
         }
-        $this->position++;
+        ++$this->position;
     }
 
     private function check(string $chars): bool
     {
-        $charsLength = strlen($chars);
+        $charsLength = \strlen($chars);
         if ($this->position + $charsLength > $this->length) {
             return false;
         }
 
-        for ($i = 0; $i < $charsLength; $i++) {
+        for ($i = 0; $i < $charsLength; ++$i) {
             if ($this->input[$this->position + $i] !== $chars[$i]) {
                 return false;
             }
@@ -249,8 +250,8 @@ class TwigPreLexer
 
         $blockName = '';
         foreach (explode(', ', $attributes) as $attr) {
-            list($key, $value) = explode(': ', $attr);
-            if ($key === 'name') {
+            [$key, $value] = explode(': ', $attr);
+            if ('name' === $key) {
                 $blockName = trim($value, "'");
                 break;
             }
@@ -262,7 +263,7 @@ class TwigPreLexer
 
         $output = "{% block {$blockName} %}";
 
-        $closingTag = "</t:block>";
+        $closingTag = '</t:block>';
         if (!$this->doesStringEventuallyExist($closingTag)) {
             throw new \RuntimeException("Expected closing tag '{$closingTag}' for block '{$blockName}' at line {$this->line}");
         }
@@ -272,7 +273,7 @@ class TwigPreLexer
         $output .= $subLexer->preLexComponents($blockContents);
 
         $this->consume($closingTag);
-        $output .= "{% endblock %}";
+        $output .= '{% endblock %}';
 
         return $output;
     }
@@ -284,4 +285,3 @@ class TwigPreLexer
         return str_contains($remainingString, $needle);
     }
 }
-
