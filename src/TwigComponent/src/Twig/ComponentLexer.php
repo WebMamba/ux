@@ -21,11 +21,12 @@ use Twig\TokenStream;
  * @internal
  *
  * thanks to @giorgiopogliani for the inspiration on this lexer <3
+ *
  * @see https://github.com/giorgiopogliani/twig-components
  */
 class ComponentLexer extends Lexer
 {
-    public const ATTRIBUTES_REGEX = '(?<attributes>(?:\s+[\w\-:.@]+(=(?:\\\"[^\\\"]*\\\"|\'[^\']*\'|[^\'\\\"=<>]+))?)*\s*)';
+    public const ATTRIBUTES_REGEX = '(?<attributes>(?:\s+[\w\-:.@]+(=(?:"[^"]*"|\'[^\']*\'|[^\'\\\"=<>]+))?)*\s*)';
     public const OPEN_TAGS_REGEX = '/<\s*t:(?<name>([[\w\-\:\.]+))\s*'.self::ATTRIBUTES_REGEX.'(\s?)+>/';
     public const CLOSE_TAGS_REGEX = '/<\/\s*t:([\w\-\:\.]+)\s*>/';
     public const SELF_CLOSE_TAGS_REGEX = '/<\s*t:(?<name>([\w\-\:\.]+))\s*'.self::ATTRIBUTES_REGEX.'(\s?)+\/>/';
