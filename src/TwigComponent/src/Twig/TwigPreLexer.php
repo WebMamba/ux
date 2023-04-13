@@ -101,7 +101,7 @@ class TwigPreLexer
                 && preg_match('/\S/', $char)
             ) {
                 $this->currentComponents[\count($this->currentComponents) - 1]['hasDefaultBlock'] = true;
-                $output .= '{% block default %}';
+                $output .= '{% block content %}';
             }
 
             $output .= $char;
