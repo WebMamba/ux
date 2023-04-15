@@ -36,7 +36,7 @@ class TwigPreLexer
         $output = '';
 
         while ($this->position < $this->length) {
-            if ($this->consume('<t:')) {
+            if ($this->consume('<twig:')) {
                 $componentName = $this->consumeComponentName();
 
                 if ('block' === $componentName) {
@@ -67,8 +67,8 @@ class TwigPreLexer
                 continue;
             }
 
-            if (!empty($this->currentComponents) && $this->check('</t:')) {
-                $this->consume('</t:');
+            if (!empty($this->currentComponents) && $this->check('</twig:')) {
+                $this->consume('</twig:');
                 $closingComponentName = $this->consumeComponentName();
                 $this->consume('>');
 
@@ -76,7 +76,7 @@ class TwigPreLexer
                 $lastComponentName = $lastComponent['name'];
 
                 if ($closingComponentName !== $lastComponentName) {
-                    throw new \RuntimeException("Expected closing tag '</t:{$lastComponentName}>' but found '</t:{$closingComponentName}>' at line {$this->line}");
+                    throw new \RuntimeException("Expected closing tag '</twig:{$lastComponentName}>' but found '</twig:{$closingComponentName}>' at line {$this->line}");
                 }
 
                 // we've reached the end of this component. If we're inside the
@@ -109,7 +109,7 @@ class TwigPreLexer
 
         if (!empty($this->currentComponents)) {
             $lastComponent = array_pop($this->currentComponents)['name'];
-            throw new \RuntimeException(sprintf('Expected closing tag "</t:%s>" not found at line %d.', $lastComponent, $this->line));
+            throw new \RuntimeException(sprintf('Expected closing tag "</twig:%s>" not found at line %d.', $lastComponent, $this->line));
         }
 
         return $output;
@@ -150,7 +150,7 @@ class TwigPreLexer
 
             $key = $this->consumeComponentName();
 
-            // <t:component someProp> -> someProp: true
+            // <twig:component someProp> -> someProp: true
             if (!$this->check('=')) {
                 $attributes[] = sprintf('%s: true', $key);
                 $this->consumeWhitespace();
@@ -293,7 +293,7 @@ class TwigPreLexer
 
         $output = "{% block {$blockName} %}";
 
-        $closingTag = '</t:block>';
+        $closingTag = '</twig:block>';
         if (!$this->doesStringEventuallyExist($closingTag)) {
             throw new \RuntimeException("Expected closing tag '{$closingTag}' for block '{$blockName}' at line {$this->line}");
         }
