@@ -3218,4 +3218,4 @@ LiveControllerDefault.values = {
 };
 LiveControllerDefault.backendFactory = (controller) => new Backend(controller.urlValue, controller.requestMethodValue, controller.csrfValue);
 
-export { Component, LiveControllerDefault as default, getComponent };
+export { Component, LiveControllerDefault as default, findChildren, findComponents, findParent, getComponent };

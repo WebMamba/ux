@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 import Component from './Component';
 import { BackendInterface } from './Backend/Backend';
 export { Component };
-export { getComponent } from './ComponentRegistry';
+export { getComponent, findParent, findChildren, findComponents } from './ComponentRegistry';
 export interface LiveEvent extends CustomEvent {
     detail: {
         controller: LiveController;

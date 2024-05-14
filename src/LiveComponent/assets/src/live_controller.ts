@@ -17,7 +17,7 @@ import getElementAsTagText from './Util/getElementAsTagText';
 import LazyPlugin from './Component/plugins/LazyPlugin';
 
 export { Component };
-export { getComponent } from './ComponentRegistry';
+export { getComponent, findParent, findChildren, findComponents } from './ComponentRegistry';
 
 export interface LiveEvent extends CustomEvent {
     detail: {
