@@ -5,6 +5,7 @@ twig:
     paths:
         '%kernel.project_dir%/templates/demos/live_memory': ~
         '%kernel.project_dir%/cookbook/': 'Cookbook'
+        '%kernel.project_dir%/var/component-assets/': ~
 
 when@test:
     twig:

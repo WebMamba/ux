@@ -1,0 +1,21 @@
+{% props color %}
+
+<div {{ attributes }} class="base">
+    <h1 class="title">Avatar</h1>
+</div>
+
+<style>
+     .title {
+        color: red;
+    }
+</style>
+
+<script>
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+        connect() {
+            console.log('Hello Alert !');
+        }
+    }
+</script>

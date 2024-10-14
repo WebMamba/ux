@@ -1,0 +1,453 @@
+{% set format = format|default %}
+{% set attributes = attributes|default({}) %}
+
+{# image MUST BE SET (and a real image) #}
+
+{% if format == 'news-grid' %}
+
+    {% set _sizes = '(min-width: 1272px) 384px, (min-width: 720px) calc(0.33 * (100vw - 120px)), calc(0.32 * (100vw - 60px))' %}
+
+    {{ image_tag(image, ({
+        format: '385x260c',
+        srcsets: {
+            '95w': '95x65c',
+            '190w': '190x129c',
+            '385w': '385x260c',
+            '770w': '770x520c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '95w': '95x65c.webp',
+                '190w': '190x129c.webp',
+                '385w': '385x260c.webp',
+                '770w': '770x520c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '385',
+        height: '260',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'card-grid' %}
+
+    {% set _sizes = '(min-width: 1272px) 384px, (min-width: 960px) calc(0.33 * (100vw - 120px)), (min-width: 720px) calc(0.5 * (100vw - 96px)), calc(100vw - 48px)' %}
+
+    {{ image_tag(image, ({
+        format: '770x520c',
+        srcsets: {
+            '385w': '385x260c',
+            '770w': '770x520c',
+            '1440w': '1440x973c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '385w': '385x260c.webp',
+                '770w': '770x520c.webp',
+                '1440w': '1440x973c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '770',
+        height: '520',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'catalog-grid' %}
+
+    {% set _sizes = '(min-width: 1272px) 384px, (min-width: 720px) calc(0.33 * (100vw - 120px)), calc(0.5 * (100vw - 60px))' %}
+
+    {{ image_tag(image, ({
+        format: '385x260c',
+        srcsets: {
+            '190w': '190x129c',
+            '385w': '385x260c',
+            '770w': '770x520c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '190w': '190x129c.webp',
+                '385w': '385x260c.webp',
+                '770w': '770x520c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '385',
+        height: '260',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'catalog-push' %}
+
+    {% set _sizes = '(min-width: 960px) 380px, 160px' %}
+
+    {{ image_tag(image, ({
+        format: '380x452c',
+        srcsets: {
+            '190w': '190x226c',
+            '380w': '380x452c',
+            '760w': '760x904c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '190w': '190x226c.webp',
+                '380w': '380x452c.webp',
+                '760w': '760x904c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '380',
+        height: '452',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'chessboard' %}
+
+    {% set _sizes = '(min-width: 1272px) 714px, (min-width: 1085px) calc(100vw - 558px), (min-width: 720px) calc(0.52 * (100vw - 72px)), calc(100vw - 48px)' %}
+
+    {{ image_tag(image, ({
+        format: '715x320c',
+        srcsets: {
+            '358w': '358x160c',
+            '715w': '715x320c',
+            '1430w': '1430x640c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '358w': '358x160c.webp',
+                '715w': '715x320c.webp',
+                '1430w': '1430x640c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '715',
+        height: '320',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'gallery' %}
+
+    {% set _sizes = '(min-width: 1180px) calc(100vw - 480px), 100vw' %}
+
+    {{ image_tag(image, ({
+        format: '1400x765c',
+        srcsets: {
+            '400w': '400x219c',
+            '900w': '900x492c',
+            '1400w': '1400x765c',
+            '1900w': '1900x1039c',
+            '2400w': '2400x1312c',
+            '2900w': '2900x1585c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '400w': '400x219c.webp',
+                '900w': '900x492c.webp',
+                '1400w': '1400x765c.webp',
+                '1900w': '1900x1039c.webp',
+                '2400w': '2400x1312c.webp',
+                '2900w': '2900x1585c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '1400',
+        height: '765',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'gallery-thumb' %}
+
+    {{ image_tag(image, ({
+        format: '60x60c',
+        srcsets: {
+            '1x': '60x60c',
+            '2x': '120x120c',
+        },
+        sources: [{
+            srcsets: {
+                '1x': '60x60c.webp',
+                '2x': '120x120c.webp',
+            },
+            type: 'image/webp',
+        }],
+        width: '60',
+        height: '60',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'product-view-essentials' %}
+
+    {% set _sizes = '(min-width: 1272px) 588px, (min-width: 720px) calc(0.485 * (100vw - 72px)), calc(100vw - 48px)' %}
+
+    {{ image_tag(image, ({
+        format: '675x687c',
+        srcsets: {
+            '320w': '320x326c',
+            '675w': '675x687c',
+            '1350w': '1350x1373c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '320w': '320x326c.webp',
+                '675w': '675x687c.webp',
+                '1350w': '1350x1373c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '675',
+        height: '687',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'product-view-description' %}
+
+    {% set _sizes = '(min-width: 1928px) 800px, (min-width: 1272px) calc(50vw - 0.095 * 1200px), (min-width: 960px) calc(100vw - 36px - 0.595 * (100vw - 72px)), calc(100vw - 48px)' %}
+
+    {{ image_tag(image, ({
+        format: '850x600c',
+        srcsets: {
+            '320w': '320x226c',
+            '640w': '640x452c',
+            '850w': '850x600c',
+            '1275w': '1275x900c',
+            '1700w': '1700x1200c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '320w': '320x226c.webp',
+                '640w': '640x452c.webp',
+                '850w': '850x600c.webp',
+                '1275w': '1275x900c.webp',
+                '1700w': '1700x1200c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '850',
+        height: '600',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'filters-default' %}
+
+    {{ image_tag(image, ({
+        format: '185x95c',
+        srcsets: {
+            '1x': '185x95c',
+            '2x': '370x190c',
+        },
+        sources: [{
+            srcsets: {
+                '1x': '185x95c.webp',
+                '2x': '370x190c.webp',
+            },
+            type: 'image/webp',
+        }],
+        width: '185',
+        height: '95',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'filters-color' %}
+
+    {{ image_tag(image, ({
+        format: '90x90c',
+        srcsets: {
+            '1x': '90x90c',
+            '2x': '180x180c',
+        },
+        sources: [{
+            srcsets: {
+                '1x': '90x90c.webp',
+                '2x': '180x180c.webp',
+            },
+            type: 'image/webp',
+        }],
+        width: '90',
+        height: '90',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'popin' %}
+
+    {{ image_tag(image, ({
+        format: '370x335c',
+        srcsets: {
+            '1x': '370x335c',
+            '2x': '740x670c',
+        },
+        sources: [{
+            srcsets: {
+                '1x': '370x335c.webp',
+                '2x': '740x670c.webp',
+            },
+            type: 'image/webp',
+        }],
+        width: '370',
+        height: '335',
+    })|merge(attributes)) }}
+
+{% elseif format == 'menu' %}
+
+    {{ image_tag(image, ({
+        format: '180x95c',
+        srcsets: {
+            '1x': '180x95c',
+            '2x': '360x190c',
+        },
+        sources: [{
+            srcsets: {
+                '1x': '180x95c.webp',
+                '2x': '360x190c.webp',
+            },
+            type: 'image/webp',
+        }],
+        width: '180',
+        height: '95',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'heading' %}
+
+    {{ image_tag(image, ({
+        format: '2000x600c',
+        srcsets: {
+            '1x': '2000x600c',
+            '2x': '4000x1200c',
+        },
+        sources: [{
+            srcsets: {
+                '1x': '480x600c.webp',
+                '2x': '960x1200c.webp',
+            },
+            media: '(max-width: 479px)',
+            type: 'image/webp',
+        }, {
+            srcsets: {
+                '1x': '480x600c',
+                '2x': '960x1200c',
+            },
+            media: '(max-width: 479px)',
+            type: image.mimeType|default,
+        }, {
+            srcsets: {
+                '1x': '960x600c.webp',
+                '2x': '1920x1200c.webp',
+            },
+            media: '(min-width: 480px) and (max-width: 959px)',
+            type: 'image/webp',
+        }, {
+            srcsets: {
+                '1x': '960x600c',
+                '2x': '1920x1200c',
+            },
+            media: '(min-width: 480px) and (max-width: 959px)',
+            type: image.mimeType|default,
+        }, {
+            srcsets: {
+                '1x': '1500x600c.webp',
+                '2x': '3000x1200c.webp',
+            },
+            media: '(min-width: 960px) and (max-width: 1499px)',
+            type: 'image/webp',
+        }, {
+            srcsets: {
+                '1x': '1500x600c',
+                '2x': '3000x1200c',
+            },
+            media: '(min-width: 960px) and (max-width: 1499px)',
+            type: image.mimeType|default,
+        }, {
+            srcsets: {
+                '1x': '2000x420c.webp',
+                '2x': '4000x840c.webp',
+            },
+            media: '(min-width: 1500px)',
+            type: 'image/webp',
+        }, {
+            srcsets: {
+                '1x': '2000x420c',
+                '2x': '4000x840c',
+            },
+            media: '(min-width: 1500px)',
+            type: image.mimeType|default,
+        }],
+        width: '1920',
+        height: '420',
+    })|merge(attributes)) }}
+
+{% elseif format == 'home-highlight' %}
+
+    {% set _sizes = '(min-width: 1920px) 1056px, (min-width: 1272px) calc(50vw + 0.12 * 1200px), (min-width: 960px) calc(50vw + 0.12 * (100vw - 72px)), (min-width: 720px) calc(0.88 * (100vw - 36px)), calc(100vw - 24px)' %}
+
+    {{ image_tag(image, ({
+        format: '1060x540c',
+        srcsets: {
+            '530w': '530x270c',
+            '1060w': '1060x540c',
+            '1590w': '1590x810c',
+            '2120w': '2120x1080c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '530w': '530x270c.webp',
+                '1060w': '1060x540c.webp',
+                '1590w': '1590x810c.webp',
+                '2120w': '2120x1080c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '1060',
+        height: '540',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'home-intro' %}
+
+    {% set _sizes = '(min-width: 1145px) 590px, (min-width: 960px) calc(0.55 * (100vw - 72px)), (min-width: 720px) calc(0.55 * (100vw - 72px) + (36px - 20px)), calc(100vw - 48px)' %}
+
+    {{ image_tag(image, ({
+        format:'675x345c',
+        srcsets: {
+            '340w': '340x174c',
+            '675w': '675x345c',
+            '1350w': '1350x690c',
+        },
+        sizes: _sizes,
+        sources: [{
+            srcsets: {
+                '340w': '340x174c.webp',
+                '675w': '675x345c.webp',
+                '1350w': '1350x690c.webp',
+            },
+            sizes: _sizes,
+            type: 'image/webp',
+        }],
+        width: '675',
+        height: '345',
+        loading: 'lazy',
+    })|merge(attributes)) }}
+
+{% elseif format == 'slideshow' %}
+
+    {{ image_tag(image, ({
+    format:'2000x900c',
+    sources: [{
+    srcsets...
