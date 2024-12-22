@@ -15,11 +15,17 @@ class TwigCompiler implements AssetCompilerInterface
         return $type === 'twig';
     }
 
-    public function compile(ExtractedAsset $extractedAsset): void
+    public function compile(ExtractedAsset $extractedAsset): string
     {
         $fileName = $extractedAsset->getHash().'.html.twig';
         $filePath = $this->directoryPath .'/' . $fileName;
 
+        if (file_exists($filePath)) {
+            return $fileName;
+        }
+
         file_put_contents($filePath, $extractedAsset->getContent());
+
+        return $fileName;
     }
 }

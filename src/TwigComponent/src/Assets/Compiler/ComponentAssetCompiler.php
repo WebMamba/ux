@@ -16,14 +16,17 @@ class ComponentAssetCompiler
     /**
      * @param ExtractedAsset[] $extractedAssets
      */
-    public function fromExtractedAssets(array $extractedAssets): void
+    public function fromExtractedAssets(array $extractedAssets): array
     {
+        $compiledMap = [];
         foreach ($extractedAssets as $extractedAsset) {
             foreach ($this->assetCompilers as $assetCompiler) {
                 if ($assetCompiler->support($extractedAsset->getType())) {
-                    $assetCompiler->compile($extractedAsset);
+                    $compiledMap[$extractedAsset->getType()] = $assetCompiler->compile($extractedAsset);
                 }
             }
         }
+
+        return $compiledMap;
     }
 }

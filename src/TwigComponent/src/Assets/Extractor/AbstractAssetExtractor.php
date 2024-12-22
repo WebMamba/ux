@@ -7,7 +7,7 @@ use Symfony\UX\TwigComponent\MountedComponent;
 
 abstract class AbstractAssetExtractor implements AssetExtractorInterface
 {
-    abstract public function extract(string $content, MountedComponent $component): ?ExtractedAsset;
+    abstract public function extract(string $content, string $componentName): ?ExtractedAsset;
 
     protected function extractWithPattern(string $content, string $pattern): ?string
     {

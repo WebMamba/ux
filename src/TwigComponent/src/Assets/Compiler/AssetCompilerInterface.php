@@ -8,5 +8,5 @@ interface AssetCompilerInterface
 {
     public function support(string $type): bool;
 
-    public function compile(ExtractedAsset $extractedAsset): void;
+    public function compile(ExtractedAsset $extractedAsset): string;
 }

@@ -8,9 +8,9 @@ use Symfony\UX\TwigComponent\MountedComponent;
 class JsExtractor extends AbstractAssetExtractor
 {
     const JS_REGEX = '/<script.*?>(.*?)<\/script>/is';
-    public function extract(string $content, MountedComponent $component): ?ExtractedAsset
+    public function extract(string $content, string $componentName): ?ExtractedAsset
     {
-        $content = $this->extractWithPattern($content, self::JS_REGEX) ?? '';
+        $content = $this->extractWithPattern($content, self::JS_REGEX);
 
         if ($content === null) {
             return null;
@@ -19,7 +19,7 @@ class JsExtractor extends AbstractAssetExtractor
         return new ExtractedAsset(
             'js',
             $content,
-            strtolower($component->getName()).'_'.md5($content)
+            strtolower($componentName).'_'.md5($content)
         );
     }
 }

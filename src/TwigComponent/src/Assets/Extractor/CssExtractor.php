@@ -9,9 +9,9 @@ class CssExtractor extends AbstractAssetExtractor
 {
     const CSS_REGEX = '/<style.*?>(.*?)<\/style>/is';
 
-    public function extract(string $content, MountedComponent $component): ?ExtractedAsset
+    public function extract(string $content, string $componentName): ?ExtractedAsset
     {
-        $content = $this->extractWithPattern($content, self::CSS_REGEX) ?? '';
+        $content = $this->extractWithPattern($content, self::CSS_REGEX);
 
         if ($content === null) {
             return null;
@@ -20,7 +20,7 @@ class CssExtractor extends AbstractAssetExtractor
         return new ExtractedAsset(
             'css',
             $content,
-            strtolower($component->getName()).'_'.md5($content)
+            strtolower($componentName).'_'.md5($content)
         );
     }
 }

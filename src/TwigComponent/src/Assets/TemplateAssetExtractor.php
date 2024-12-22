@@ -2,8 +2,6 @@
 
 namespace Symfony\UX\TwigComponent\Assets;
 
-use Symfony\UX\TwigComponent\MountedComponent;
-
 class TemplateAssetExtractor
 {
     public array $extractedAssets = [];
@@ -12,11 +10,11 @@ class TemplateAssetExtractor
         private readonly iterable $extractors,
     ) {}
 
-    public function extract(string $content, MountedComponent $component): array
+    public function extract(string $content, string $componentName): array
     {
         $this->extractedAssets = [];
         foreach ($this->extractors as $extractor) {
-            if (null !== $extracted = $extractor->extract($content, $component))
+            if (null !== $extracted = $extractor->extract($content, $componentName))
             $this->extractedAssets[] = $extracted;
         }
 

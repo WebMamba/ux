@@ -17,7 +17,7 @@ class JsCompiler implements AssetCompilerInterface
         return $type === 'js';
     }
 
-    public function compile(ExtractedAsset $extractedAsset): void
+    public function compile(ExtractedAsset $extractedAsset): string
     {
         $fileName = $extractedAsset->getHash().'.js';
         $filePath = $this->directoryPath .'/' . $fileName;
@@ -25,9 +25,11 @@ class JsCompiler implements AssetCompilerInterface
         $this->assetsComponentRegistry->add($fileName);
 
         if (file_exists($filePath)) {
-            return;
+            return $fileName;
         }
 
         file_put_contents($filePath, $extractedAsset->getContent(), FILE_APPEND);
+
+        return $fileName;
     }
 }

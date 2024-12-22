@@ -31,6 +31,8 @@ use Symfony\UX\TwigComponent\Assets\Compiler\ComponentAssetCompiler;
 use Symfony\UX\TwigComponent\Assets\Compiler\CssCompiler;
 use Symfony\UX\TwigComponent\Assets\Compiler\JsCompiler;
 use Symfony\UX\TwigComponent\Assets\Compiler\TwigCompiler;
+use Symfony\UX\TwigComponent\Assets\ComponentAssetDumper;
+use Symfony\UX\TwigComponent\Assets\ComponentAssetsCacheWarmup;
 use Symfony\UX\TwigComponent\Assets\ComponentsAssetsExtractor;
 use Symfony\UX\TwigComponent\Assets\Extractor\CssExtractor;
 use Symfony\UX\TwigComponent\Assets\Extractor\JsExtractor;
@@ -210,18 +212,34 @@ final class TwigComponentExtension extends Extension implements ConfigurationInt
             ])
         ;
 
-        $container->register('ux_twig_component.assets__components_attributes_factory', AssetsComponentAttributeFactory::class)
-            ->setArguments([
-                new Reference('ux_twig_component.extractor.template_extractor')
-            ])
-        ;
+        $container->register('ux_twig_component.assets_components_attributes_factory', AssetsComponentAttributeFactory::class);
 
-        $container->register('ux_twig_component.assets_listener', TwigComponentAssetsListener::class)
+        $container->register('ux_twig_component.assets_component_compiler', ComponentAssetDumper::class)
             ->setArguments([
                 new Reference('twig'),
                 new Reference('ux_twig_component.extractor.template_extractor'),
                 new Reference('ux_twig_component.asset_compiler'),
-                new Reference('ux_twig_component.assets__components_attributes_factory'),
+                new Reference('cache.system')
+            ])
+        ;
+
+        $container->register('ux_twig_component.assets_cache_warmup', ComponentAssetsCacheWarmup::class)
+            ->setArguments([
+                new Parameter('twig.default_path'),
+                new Reference('ux.twig_component.component_factory'),
+                class_exists(AbstractArgument::class) ? new AbstractArgument(\sprintf('Added in %s.', TwigComponentPass::class)) : [],
+                $config['anonymous_template_directory'],
+                new Reference('ux_twig_component.assets_component_compiler'),
+                new Reference('twig')
+            ])
+            ->addTag('kernel.cache_warmer')
+        ;
+
+        $container->register('ux_twig_component.assets_listener', TwigComponentAssetsListener::class)
+            ->setArguments([
+                new Reference('ux_twig_component.assets_component_compiler'),
+                new Reference('ux_twig_component.assets_components_attributes_factory'),
+                new Reference('ux_twig_component.assets_component_registry')
             ])
             ->addTag('kernel.event_subscriber')
         ;

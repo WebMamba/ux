@@ -19,7 +19,7 @@ class CssCompiler implements AssetCompilerInterface
         return 'css' === $type;
     }
 
-    public function compile(ExtractedAsset $extractedAsset): void
+    public function compile(ExtractedAsset $extractedAsset): string
     {
         $contentTemplate = <<<EOF
 %s {
@@ -33,7 +33,7 @@ EOF;
         $this->assetsComponentRegistry->add($fileName);
 
         if (file_exists($filePath)) {
-            return;
+            return $fileName;
         }
         
         $attributes = '['.self::CSS_ATTRIBUTE_ID.'='.$extractedAsset->getHash().']';
@@ -41,5 +41,7 @@ EOF;
         $contentFile = sprintf($contentTemplate, $attributes, $extractedAsset->getContent());
 
         file_put_contents($filePath, $contentFile, FILE_APPEND);
+
+        return $fileName;
     }
 }

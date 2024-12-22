@@ -7,5 +7,5 @@ use Symfony\UX\TwigComponent\MountedComponent;
 
 interface AssetExtractorInterface
 {
-    public function extract(string $content, MountedComponent $component): ?ExtractedAsset;
+    public function extract(string $content, string $componentName): ?ExtractedAsset;
 }

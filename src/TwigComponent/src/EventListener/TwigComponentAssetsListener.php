@@ -4,18 +4,16 @@ namespace Symfony\UX\TwigComponent\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\UX\TwigComponent\Assets\AssetsComponentAttributeFactory;
-use Symfony\UX\TwigComponent\Assets\Compiler\ComponentAssetCompiler;
-use Symfony\UX\TwigComponent\Assets\TemplateAssetExtractor;
+use Symfony\UX\TwigComponent\Assets\AssetsComponentRegistry;
+use Symfony\UX\TwigComponent\Assets\ComponentAssetDumper;
 use Symfony\UX\TwigComponent\Event\PreRenderEvent;
-use Twig\Environment;
 
 class TwigComponentAssetsListener implements EventSubscriberInterface
 {
     public function __construct(
-        private Environment $twig,
-        private TemplateAssetExtractor $assetExtractor,
-        private ComponentAssetCompiler $assetCompiler,
+        private ComponentAssetDumper $assetCompiler,
         private AssetsComponentAttributeFactory $assetAttributeFactory,
+        private AssetsComponentRegistry $assetRegistry,
     ) {}
     public static function getSubscribedEvents(): array
     {
@@ -26,29 +24,23 @@ class TwigComponentAssetsListener implements EventSubscriberInterface
 
     public function onPreRender(PreRenderEvent $event): void
     {
-        $template = $this->twig->loadTemplate(
-            $this->twig->getTemplateClass($event->getTemplate()),
-            $event->getTemplate(),
-            $event->getTemplateIndex(),
-        )->getSourceContext();
+        $compiledComponent = $this->assetCompiler->compile($event->getMountedComponent()->getName(), $event->getTemplate());
 
-        $component = $event->getMountedComponent();
-        $code = $template->getCode();
-
-        $extractedAssets = $this->assetExtractor->extract($code, $component);
-        $this->assetCompiler->fromExtractedAssets($extractedAssets);
-
-        $componentAttributes = $this->assetAttributeFactory->create();
+        $componentAttributes = $this->assetAttributeFactory->create($compiledComponent);
 
         $variables = $event->getVariables();
         $variables['attributes'] = $variables['attributes']->defaults($componentAttributes);
 
         $event->setVariables($variables);
 
-        if (null === $this->assetExtractor->getExtractedAsset('twig')) {
+        if ([] !== $compiledComponent->getExtractedAssets()) {
             $event->setTemplate(
-                $this->assetExtractor->getExtractedAsset('twig')->getHash() . '.html.twig'
+                $compiledComponent->getCompiledAssets()['twig']
             );
+        }
+
+        foreach ($compiledComponent->getCompiledAssets() as $compiledAsset) {
+            $this->assetRegistry->add($compiledAsset);
         }
     }
 }

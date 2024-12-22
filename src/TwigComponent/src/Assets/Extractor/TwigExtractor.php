@@ -7,7 +7,7 @@ use Symfony\UX\TwigComponent\MountedComponent;
 
 class TwigExtractor implements AssetExtractorInterface
 {
-    public function extract(string $content, MountedComponent $component): ?ExtractedAsset
+    public function extract(string $content, string $componentName): ?ExtractedAsset
     {
         if (!preg_match(CssExtractor::CSS_REGEX, $content) && !preg_match(JsExtractor::JS_REGEX, $content)) {
             return null;
@@ -19,7 +19,7 @@ class TwigExtractor implements AssetExtractorInterface
         return new ExtractedAsset(
             'twig',
             $content,
-            strtolower($component->getName()).'_'.md5($content),
+            strtolower($componentName).'_'.md5($content),
         );
     }
 }
