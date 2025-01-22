@@ -516,10 +516,14 @@ Otherwise, configure Mercure Hub(s) to use:
 
 .. code-block:: yaml
 
-    # config/packages/turbo.yaml
-    turbo:
-        mercure:
-            hubs: [default]
+    # config/packages/mercure.yaml
+    mercure:
+        default:
+            url: '%env(MERCURE_URL)%'
+            public_url: '%env(MERCURE_PUBLIC_URL)%'
+            jwt:
+                secret: '%env(MERCURE_JWT_SECRET)%'
+                publish: '*'
 
 Let's create our chat::
 
